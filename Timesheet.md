@@ -37,6 +37,10 @@ Estimated time: 40hours
 ### Setting up the Server/API
     **22 Sept '22**'
 
-    09:15 - 0x:xx Working on the give ratings and review routes
+    09:15 - 11:15: Working on the give ratings and review routes
+    11:15 - 11:50: Working on the login UI
+    01:05 - 02:20: Working on the login UI (done)
+    02:40 - 03:00: Working on the patient home page
+    
 
 
