@@ -2,6 +2,9 @@ const express = require('express');
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const router = express.Router()
+const formData = require('form-data')
+const Mailgun = require('mailgun.js')
+const mailgun = new Mailgun(formData)
 const authModel = require('../models/auth.model')
 
 
@@ -28,7 +31,6 @@ router.post('/signin', async (req, res) => {
   if (!email || !password) return res.status(400).json({ error: 'Both fields are required' })
   const existingUser = await authModel.findAll({ where: { email: email.toLowerCase() } })
   if (existingUser.length === 0) return res.status(400).json({ error: 'User does not exists' })
-  console.log(existingUser)
   const passwordCheck = bcrypt.compareSync(password, existingUser[0].dataValues.password)
   if (passwordCheck) {
     let payload = JSON.parse(JSON.stringify(existingUser[0].dataValues))
@@ -38,6 +40,43 @@ router.post('/signin', async (req, res) => {
     return res.status(200).json({ data: { refreshToken, accessToken, payload } })
   }
   else return res.status(400).json({ error: 'Wrong password' })
+})
+
+
+router.post('/reset-password-request', async (req, res) => {
+  const { email } = req.body
+  if (!email) return res.status(400).json({ error: 'Email is required' })
+  const existingUser = await authModel.findAll({ where: { email: email.toLowerCase() } })
+  if (existingUser.length === 0) return res.status(400).json({ error: 'Email doesn\'t exists' })
+  let code = resetPassCode(20)
+  const updateUser = await authModel.update({ resetPassCode: code }, { where: { email: email } })
+  const mg = mailgun.client({ username: 'api', key: process.env.API_KEY })
+  mg.messages.create("sandbox6ec3153e507f4aa3b425650b00d96044.mailgun.org",
+    {
+      from: "iCare Support <fahmidsakib97@gmail.com>",
+      to: [email],
+      subject: "Reset password token",
+      html: `<a href="http://localhost:8000/auth/reset-password-confirm/${existingUser[0].dataValues.id}/${code}">Click here to reset your password</a>`,
+    })
+    .then(msg => res.status(200).json({ alert: msg.message }))
+    .catch(err => res.status(501).json({ error: err }))
+})
+
+
+router.post('/reset-password-confirm/:id/:code', async (req, res) => {
+  const { password, confirmPassword } = req.body
+  if (!password || !confirmPassword) return res.status(400).json({ error: 'Both fields are required' })
+  if (password !== confirmPassword) return res.status(400).json({ error: 'Password does not match' })
+  const existingUser = await authModel.findAll({ where: { id: req.params.id } })
+  if (existingUser[0].dataValues.resetPassCode !== req.params.code) return res.status(400).json({ error: 'Invalid link' })
+  const salt = await bcrypt.genSalt(10)
+  const hash = await bcrypt.hash(password, salt)
+  try {
+    const updateUser = await authModel.update({ password: hash, resetPassCode: '' }, { where: { id: req.params.id } })
+    res.status(200).json({alert: "Password changed successful"})
+  } catch (error) {
+    res.status(501).json({ error: error.message })
+  }
 })
 
 
@@ -53,6 +92,17 @@ router.post('/token', async (req, res) => {
     res.status(401).json({ error: 'Invalid refresh token provided' })
   }
 })
+
+
+function resetPassCode(hashLength = 10) {
+  const charPool = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
+  const chars = []
+  for (let i = 0; i < hashLength; i++) {
+    const randIndex = Math.floor(Math.random() * charPool.length)
+    chars.push(charPool[randIndex])
+  }
+  return chars.join("")
+}
 
 
 module.exports = router

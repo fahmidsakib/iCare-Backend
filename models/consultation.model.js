@@ -6,12 +6,13 @@ const consultationModel = sequelize.define('Consultation',
   {
     patientId: { type: DataTypes.INTEGER, allowNull: false },
     doctorId: { type: DataTypes.INTEGER, allowNull: false },
-    time: { type: DataTypes.TIME, allowNull: false },
-    status: { type: DataTypes.STRING, allowNull: true, defaultValue: 'Upcoming' },
-    prescription: { type: DataTypes.TEXT, allowNull: true, defaultValue: '' },
-    date: { type: DataTypes.DATE, allowNull: false}
+    time: { type: DataTypes.ARRAY(DataTypes.TIME), allowNull: false },
+    status: { type: DataTypes.STRING, defaultValue: 'Upcoming' },
+    prescription: { type: DataTypes.TEXT, defaultValue: '' },
+    date: { type: DataTypes.DATE, allowNull: false },
+    cost: { type: DataTypes.INTEGER, allowNull: false }
   },
   { timestamps: true, freezeTableName: true },
 )
-consultationModel.sync({ force: true })
+// consultationModel.sync({ force: true })
 module.exports = consultationModel

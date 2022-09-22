@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken')
 const authRouter = require('./routes/auth.route')
 const doctorRouter = require('./routes/doctor.route')
 const patientRouter = require('./routes/patient.route')
+const consultationRouter = require('./routes/consultation.route')
 
 
 const app = express();
@@ -20,6 +21,7 @@ app.use('/auth', authRouter)
 app.use(authenticateRequest)
 app.use('/doctor', doctorRouter)
 app.use('/patient', patientRouter)
+app.use('/consultation', consultationRouter)
 
 
 
