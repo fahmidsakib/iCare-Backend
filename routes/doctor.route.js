@@ -10,8 +10,7 @@ router.post('/save-info', async (req, res) => {
   const { qualification, experience, hospital, location, speciality, availableDay, availableTime, avgConsultationTime, cost } = req.body
   if (!qualification || !experience || !hospital || !location || !speciality || !availableDay || !availableTime || !avgConsultationTime || !cost) return res.status(400).json({ error: 'All fields are required' })
   try {
-    const newDoctorInfo = await doctorModel.create({ name: req.payload.name, email: req.payload.email, qualification, experience, hospital, location, speciality, availableDay, availableTime, avgConsultationTime, ratingSum: 0, peopleRated: 0, cost })
-    console.log(newDoctorInfo)
+    const newDoctorInfo = await doctorModel.create({ name: req.payload.name, email: req.payload.email, qualification, experience, hospital, location, speciality, availableDay, availableTime, avgConsultationTime, ratingAndReview: [], cost })
     res.status(201).json({ alert: 'Your info saved successfully' })
   } catch (error) {
     res.status(501).json({ error: error.message })

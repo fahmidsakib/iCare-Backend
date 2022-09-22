@@ -59,13 +59,13 @@ router.get('/get-past-consultations/:patientId', async (req, res) => {
 
 
 router.get('/give-rating/:doctorId', async (req, res) => {
-  const { rating } = req.body
-  if(!rating) return res.status(400).json({ error: 'Rating field is empty'})
+  const { rating, review } = req.body
+  if(!rating || !review) return res.status(400).json({ error: 'Both fields are required' })
   try {
     const doctor = await doctorModel.findAll({ where: { id: req.params.doctorId } })
-    let updatedRatingSum = doctor[0].dataValues.ratingSum + rating
-    let updatedPeopleRated = doctor[0].dataValues.peopleRated + 1
-    const updatedDoctor = await doctorModel.update({ratingSum: updatedRatingSum, peopleRated: updatedPeopleRated}, { where: { id: req.params.doctorId } })
+    let copyRatingAndReview = JSON.parse(JSON.stringify(doctor[0].dataValues.ratingAndReview))
+    let updatedRatingAndReview = copyRatingAndReview.concat([{ rating, review }])
+    const updatedDoctor = await doctorModel.update({ ratingAndReview: updatedRatingAndReview }, { where: { id: req.params.doctorId } })
     res.status(200).json({alert: "Thank you for your rating"})
   } catch (error) {
     res.status(501).json({ error: error.message })
