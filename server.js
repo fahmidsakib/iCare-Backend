@@ -24,7 +24,6 @@ app.use('/patient', patientRouter)
 app.use('/consultation', consultationRouter)
 
 
-
 app.listen(process.env.PORT || 8000)
 
 
