@@ -6,7 +6,7 @@ const consultationModel = require('../models/consultation.model')
 
 
 router.get('/check-info', async (req, res) => {
-  const doctor = await doctorModel.findAll({ where: { id: req.payload.id } })
+  const doctor = await doctorModel.findAll({ where: { email: req.payload.email } })
   if (doctor.length === 0) return res.status(200).json({ data: undefined })
   else res.status(200).json({ data: doctor })
 })

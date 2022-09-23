@@ -6,9 +6,10 @@ const consultationModel = require('../models/consultation.model')
 
 
 router.get('/check-info', async (req, res) => {
-    const patient = await patientModel.findAll({ where: { id: req.payload.id } })
-    if (patient.length === 0) return res.status(200).json({ data: undefined })
-    else res.status(200).json({ data: patient })
+  const patient = await patientModel.findAll({ where: { email: req.payload.email } })
+  console.log(patient)
+  if (patient.length === 0) return res.status(200).json({ data: undefined })
+  else res.status(200).json({ data: patient })
 })
 
 
@@ -36,14 +37,14 @@ router.get('/get-doctors-info', async (req, res) => {
 
 router.get('/get-consultations', async (req, res) => {
   try {
-    const consultation = await consultationModel.findAll({ order: [['date', 'ASC'],['time', 'ASC']] },
+    const consultation = await consultationModel.findAll({ order: [['date', 'ASC'], ['time', 'ASC']] },
       { where: { patientId: req.payload.id } })
     let todaysConsultations = [], upcomingConsultations = []
     for (let i = 0; i < consultation.length; i++) {
       if (consultation[i].dataValues.date.getDate() === new Date().getDate()) todaysConsultations.push(consultation[i].dataValues)
       if (consultation[i].dataValues.date.getDate() > new Date().getDate()) upcomingConsultations.push(consultation[i].dataValues)
     }
-    res.status(200).json({ data:{todaysConsultations, upcomingConsultations}})
+    res.status(200).json({ data: { todaysConsultations, upcomingConsultations } })
   } catch (error) {
     res.status(501).json({ error: error.message })
   }
@@ -67,13 +68,13 @@ router.get('/get-past-consultations', async (req, res) => {
 
 router.post('/give-rating/:doctorId', async (req, res) => {
   const { rating, review } = req.body
-  if(!rating || !review) return res.status(400).json({ error: 'Both fields are required' })
+  if (!rating || !review) return res.status(400).json({ error: 'Both fields are required' })
   try {
     const doctor = await doctorModel.findAll({ where: { id: req.params.doctorId } })
     let copyRatingAndReview = JSON.parse(JSON.stringify(doctor[0].dataValues.ratingAndReview))
     let updatedRatingAndReview = copyRatingAndReview.concat([{ rating, review }])
     const updatedDoctor = await doctorModel.update({ ratingAndReview: updatedRatingAndReview }, { where: { id: req.params.doctorId } })
-    res.status(200).json({alert: "Thank you for your rating"})
+    res.status(200).json({ alert: "Thank you for your rating" })
   } catch (error) {
     res.status(501).json({ error: error.message })
   }
