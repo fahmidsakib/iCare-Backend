@@ -5,13 +5,19 @@ const patientModel = require('../models/patient.model')
 const consultationModel = require('../models/consultation.model')
 
 
+router.get('/check-info', async (req, res) => {
+  const doctor = await doctorModel.findAll({ where: { id: req.payload.id } })
+  if (doctor.length === 0) return res.status(200).json({ data: undefined })
+  else res.status(200).json({ data: doctor })
+})
+
 
 router.post('/save-info', async (req, res) => {
   const { qualification, experience, hospital, location, speciality, availableDay, availableTime, avgConsultationTime, cost } = req.body
   if (!qualification || !experience || !hospital || !location || !speciality || !availableDay || !availableTime || !avgConsultationTime || !cost) return res.status(400).json({ error: 'All fields are required' })
   try {
     const newDoctorInfo = await doctorModel.create({ name: req.payload.name, email: req.payload.email, qualification, experience, hospital, location, speciality, availableDay, availableTime, avgConsultationTime, ratingAndReview: [], cost })
-    res.status(201).json({ alert: 'Your info saved successfully' })
+    res.status(201).json({ data: { payload: newDoctorInfo, alert: 'Your info saved successfully' } })
   } catch (error) {
     res.status(501).json({ error: error.message })
   }
@@ -29,10 +35,10 @@ router.get('/get-patient-info/:patientId', async (req, res) => {
 
 
 
-router.get('/get-consultations/:doctorId', async (req, res) => {
+router.get('/get-consultations', async (req, res) => {
   try {
     const consultation = await consultationModel.findAll({ order: [['date', 'ASC'], ['time', 'ASC']] },
-      { where: { doctorId: req.params.doctorId } })
+      { where: { doctorId: req.payload.id } })
     let todaysConsultations = [], upcomingConsultations = []
     for (let i = 0; i < consultation.length; i++) {
       if (consultation[i].dataValues.date.getDate() === new Date().getDate()) todaysConsultations.push(consultation[i].dataValues)

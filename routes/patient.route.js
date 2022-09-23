@@ -5,12 +5,19 @@ const doctorModel = require('../models/doctor.model')
 const consultationModel = require('../models/consultation.model')
 
 
+router.get('/check-info', async (req, res) => {
+    const patient = await patientModel.findAll({ where: { id: req.payload.id } })
+    if (patient.length === 0) return res.status(200).json({ data: undefined })
+    else res.status(200).json({ data: patient })
+})
+
+
 router.post('/save-info', async (req, res) => {
   const { lookingFor, pastDiseases, location, sex, bloodGroup, weight, age } = req.body
   if (!lookingFor || !pastDiseases || !location || !sex || !bloodGroup || !weight || !age) return res.status(400).json({ error: 'All fields are required' })
   try {
     const newPatientInfo = await patientModel.create({ name: req.payload.name, email: req.payload.email, lookingFor, pastDiseases, location, sex, bloodGroup, weight, age })
-    res.status(201).json({ alert: 'Your info saved successfully' })
+    res.status(201).json({ data: { payload: newPatientInfo, alert: 'Your info saved successfully' } })
   } catch (error) {
     res.status(501).json({ error: error.message })
   }
@@ -27,10 +34,10 @@ router.get('/get-doctors-info', async (req, res) => {
 })
 
 
-router.get('/get-consultations/:patientId', async (req, res) => {
+router.get('/get-consultations', async (req, res) => {
   try {
     const consultation = await consultationModel.findAll({ order: [['date', 'ASC'],['time', 'ASC']] },
-      { where: { patientId: req.params.patientId } })
+      { where: { patientId: req.payload.id } })
     let todaysConsultations = [], upcomingConsultations = []
     for (let i = 0; i < consultation.length; i++) {
       if (consultation[i].dataValues.date.getDate() === new Date().getDate()) todaysConsultations.push(consultation[i].dataValues)
@@ -43,10 +50,10 @@ router.get('/get-consultations/:patientId', async (req, res) => {
 })
 
 
-router.get('/get-past-consultations/:patientId', async (req, res) => {
+router.get('/get-past-consultations', async (req, res) => {
   try {
     const consultation = await consultationModel.findAll({ order: [['date', 'DESC'], ['time', 'ASC']] },
-      { where: { patientId: req.params.patientId } })
+      { where: { patientId: req.payload.id } })
     let pastConsultations = []
     for (let i = 0; i < consultation.length; i++) {
       if (consultation[i].dataValues.date.getDate() < new Date().getDate()) pastConsultations.push(consultation[i].dataValues)
@@ -58,7 +65,7 @@ router.get('/get-past-consultations/:patientId', async (req, res) => {
 })
 
 
-router.get('/give-rating/:doctorId', async (req, res) => {
+router.post('/give-rating/:doctorId', async (req, res) => {
   const { rating, review } = req.body
   if(!rating || !review) return res.status(400).json({ error: 'Both fields are required' })
   try {

@@ -34,13 +34,29 @@ Estimated time: 40hours
 ---
 
 
-### Setting up the Server/API
+### Setting up the Server/API and Some UI
     **22 Sept '22**'
 
     09:15 - 11:15: Working on the give ratings and review routes
     11:15 - 11:50: Working on the login UI
     01:05 - 02:20: Working on the login UI (done)
     02:40 - 03:00: Working on the patient home page
-    
+    05:05 - 06:05: Working on the patient slice
+
+
+---
+    Total Time: xxx min (x hours xx mins)
+---
+
+
+### Homepage for both patient and doctor
+    **23 Sept '22**'
+
+    09:10 - 10:00: Working on the onBoard form for patient
+    10:00 - 11:00: Working on the onBoard form for doctor
+    11:00 - 01:10: Working on the homepages for both patient and doctor
+    02:25 - 03:02: Working on the homepages for both patient and doctor
+
+
 
 
