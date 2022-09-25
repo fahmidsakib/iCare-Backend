@@ -12,5 +12,5 @@ const authModel = sequelize.define('Auth',
   },
   { timestamps: true, freezeTableName: true },
 )
-// authModel.sync({ alter: true })
+// authModel.sync({ force: true })
 module.exports = authModel

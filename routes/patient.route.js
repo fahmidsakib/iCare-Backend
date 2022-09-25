@@ -7,9 +7,8 @@ const consultationModel = require('../models/consultation.model')
 
 router.get('/check-info', async (req, res) => {
   const patient = await patientModel.findAll({ where: { email: req.payload.email } })
-  console.log(patient)
   if (patient.length === 0) return res.status(200).json({ data: undefined })
-  else res.status(200).json({ data: patient })
+  else res.status(200).json({ data: patient[0] })
 })
 
 
@@ -37,8 +36,7 @@ router.get('/get-doctors-info', async (req, res) => {
 
 router.get('/get-consultations', async (req, res) => {
   try {
-    const consultation = await consultationModel.findAll({ order: [['date', 'ASC'], ['time', 'ASC']] },
-      { where: { patientId: req.payload.id } })
+    const consultation = await consultationModel.findAll({ where: { patientId: req.payload.id } }, { order: [['date', 'ASC'], ['time', 'ASC']] })
     let todaysConsultations = [], upcomingConsultations = []
     for (let i = 0; i < consultation.length; i++) {
       if (consultation[i].dataValues.date.getDate() === new Date().getDate()) todaysConsultations.push(consultation[i].dataValues)
@@ -53,8 +51,7 @@ router.get('/get-consultations', async (req, res) => {
 
 router.get('/get-past-consultations', async (req, res) => {
   try {
-    const consultation = await consultationModel.findAll({ order: [['date', 'DESC'], ['time', 'ASC']] },
-      { where: { patientId: req.payload.id } })
+    const consultation = await consultationModel.findAll({ where: { patientId: req.payload.id } }, { order: [['date', 'DESC'], ['time', 'ASC']] })
     let pastConsultations = []
     for (let i = 0; i < consultation.length; i++) {
       if (consultation[i].dataValues.date.getDate() < new Date().getDate()) pastConsultations.push(consultation[i].dataValues)
@@ -75,6 +72,22 @@ router.post('/give-rating/:doctorId', async (req, res) => {
     let updatedRatingAndReview = copyRatingAndReview.concat([{ rating, review }])
     const updatedDoctor = await doctorModel.update({ ratingAndReview: updatedRatingAndReview }, { where: { id: req.params.doctorId } })
     res.status(200).json({ alert: "Thank you for your rating" })
+  } catch (error) {
+    res.status(501).json({ error: error.message })
+  }
+})
+
+
+router.get('/check-available-slot/:doctorId/:date', async (req, res) => {
+  let day = new Date(req.params.date).getDay(), date = new Date(req.params.date).getDate(), year = new Date(req.params.date).getFullYear(), availableSlot = []
+  try {
+    const doctor = await doctorModel.findOne({ where: { id: req.params.doctorId } })
+    const consultation = await consultationModel.findAll({ where: { doctorId: req.params.doctorId } })
+    for (let i = 0; i < doctor.dataValues.availableTime.length; i++) {
+      let index = consultation.findIndex(el => el.time.includes(doctor.dataValues.availableTime[i]) && el.date.getDate() === date && el.date.getFullYear() === year)
+      if (index === -1 && doctor.dataValues.availableDay[day]) availableSlot.push(doctor.dataValues.availableTime[i])
+    }
+    res.status(200).json({ data: availableSlot  })
   } catch (error) {
     res.status(501).json({ error: error.message })
   }

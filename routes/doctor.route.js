@@ -34,11 +34,19 @@ router.get('/get-patient-info/:patientId', async (req, res) => {
 })
 
 
+router.get('/get-patients-info', async (req, res) => {
+  try {
+    const patientsInfo = await patientModel.findAll()
+    res.status(200).json({ data: patientsInfo })
+  } catch (error) {
+    res.status(501).json({ error: error.message })
+  }
+})
+
 
 router.get('/get-consultations', async (req, res) => {
   try {
-    const consultation = await consultationModel.findAll({ order: [['date', 'ASC'], ['time', 'ASC']] },
-      { where: { doctorId: req.payload.id } })
+    const consultation = await consultationModel.findAll({ where: { doctorId: req.payload.id } }, { order: [['date', 'ASC'], ['time', 'ASC']] })
     let todaysConsultations = [], upcomingConsultations = []
     for (let i = 0; i < consultation.length; i++) {
       if (consultation[i].dataValues.date.getDate() === new Date().getDate()) todaysConsultations.push(consultation[i].dataValues)
@@ -49,6 +57,7 @@ router.get('/get-consultations', async (req, res) => {
     res.status(501).json({ error: error.message })
   }
 })
+
 
 router.get('/revenue', async (req, res) => {
   let start = new Date(req.query.start_date).getTime(), end = Date.now(), revenue = 0, selectedConsultations = []
@@ -67,7 +76,6 @@ router.get('/revenue', async (req, res) => {
     res.status(501).json({ error: error.message })
   }
 })
-
 
 
 module.exports = router

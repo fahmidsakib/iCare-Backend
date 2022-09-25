@@ -5,10 +5,11 @@ const consultationModel = require('../models/consultation.model')
 
 
 router.post('/book-consultation', async (req, res) => {
-  const { doctorId, time, date, cost } = req.body
-  if (!doctorId || !time || !date || !cost) return res.status(400).json({ error: 'All fields are required' })
+  const { patientId, doctorId, time, date, cost } = req.body
+  console.log(patientId, doctorId, time, date, cost)
+  if (!patientId || !doctorId || !time || !date || !cost) return res.status(400).json({ error: 'All fields are required' })
   try {
-    const newConsultation = await consultationModel.create({ doctorId, time, date, patientId: req.payload.id, cost })
+    const newConsultation = await consultationModel.create({ doctorId, time, date, patientId, cost })
     res.status(201).json({ alert: 'Your booking is successful' })
   } catch (error) {
     res.status(501).json({ error: error.message })
