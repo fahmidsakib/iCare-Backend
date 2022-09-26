@@ -86,6 +86,14 @@ Estimated time: 40hours
     12:00 - 01:00: Working on the fixing some logical calculation
     01:00 - 01:50: Working on the showing patientInfo to doctor
     02:50 - 03:30: Working on the showing patientInfo to doctor
+    03:45 - 04:15: Working on the reset password error
+    04:15 - 05:00: Working on the UI
+
+
+---
+    Total Time: 335 min (5 hours 35 mins)
+---
+
 
 
 
