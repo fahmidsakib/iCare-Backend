@@ -1,11 +1,10 @@
-require('dotenv').config()
-const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = new Sequelize(process.env.URL);
+const sequelize = require('../dbConfig')
+const { DataTypes } = require('sequelize');
 
 const doctorModel = sequelize.define('Doctor',
   {
     name: { type: DataTypes.STRING, allowNull: false },
-    email: { type: DataTypes.STRING, allowNull: false},
+    email: { type: DataTypes.STRING, allowNull: false },
     qualification: { type: DataTypes.TEXT, allowNull: false },
     experience: { type: DataTypes.TEXT, allowNull: false },
     hospital: { type: DataTypes.TEXT, allowNull: false },

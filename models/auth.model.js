@@ -1,6 +1,5 @@
-require('dotenv').config()
-const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = new Sequelize(process.env.URL);
+const sequelize = require('../dbConfig')
+const { DataTypes } = require('sequelize');
 
 const authModel = sequelize.define('Auth',
   {
@@ -8,7 +7,7 @@ const authModel = sequelize.define('Auth',
     email: { type: DataTypes.STRING, allowNull: false },
     password: { type: DataTypes.STRING, allowNull: false },
     userType: { type: DataTypes.STRING, allowNull: false },
-    resetPassCode: { type: DataTypes.STRING, defaultValue: ''}
+    resetPassCode: { type: DataTypes.STRING, defaultValue: '' }
   },
   { timestamps: true, freezeTableName: true },
 )

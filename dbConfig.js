@@ -1,7 +1,5 @@
-// const pg = require('pg');
-// require('dotenv').config()
+require('dotenv').config()
+const { Sequelize } = require('sequelize');
+const sequelize = new Sequelize(process.env.URL);
 
-// const conString = process.env.URL
-// const client = new pg.Client(conString);
-
-// module.exports = client
+module.exports = sequelize

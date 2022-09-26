@@ -1,6 +1,5 @@
-require('dotenv').config()
-const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = new Sequelize(process.env.URL);
+const sequelize = require('../dbConfig')
+const { DataTypes } = require('sequelize');
 
 const consultationModel = sequelize.define('Consultation',
   {
