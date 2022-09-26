@@ -10,7 +10,7 @@ const consultationRouter = require('./routes/consultation.route')
 
 
 const app = express();
-app.use(cors())
+app.use(cors({origin: "*"}))
 app.use(express.urlencoded({ extended: false }))
 app.use(morgan("dev"))
 app.use(express.static("public"))
