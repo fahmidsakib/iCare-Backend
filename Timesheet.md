@@ -72,6 +72,21 @@ Estimated time: 40hours
     07:00 - 08:00: Working on the doctor homepage UI
 
 
+---
+    Total Time: 180 min (3 hours 0 mins)
+---
+
+
+### Update the user profile
+    **26 Sept '22**
+
+    09:55 - 10:50: Working on the revenue generating for doctor
+    11:05 - 11:45: Working on the small CSS issue
+    11:45 - 12:00: Working on the snackbar
+    12:00 - 01:00: Working on the fixing some logical calculation
+    01:00 - 01:xx: Working on the deploying the site
+
+
 
 
 

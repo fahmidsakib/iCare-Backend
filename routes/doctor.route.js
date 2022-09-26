@@ -63,8 +63,7 @@ router.get('/revenue', async (req, res) => {
   let start = new Date(req.query.start_date).getTime(), end = Date.now(), revenue = 0, selectedConsultations = []
   if (req.query.end_date !== undefined) end = new Date(req.query.end_date).getTime()
   try {
-    const closedConsultation = await consultationModel.findAll({ order: [['date', 'DESC'], ['time', 'ASC']] },
-      { where: { doctorEmail: req.payload.email, status: 'Closed' } })
+    const closedConsultation = await consultationModel.findAll({ where: { doctorEmail: req.payload.email, status: 'Closed' } }, { order: [['date', 'DESC'], ['time', 'ASC']] })
     for (let i = 0; i < closedConsultation.length; i++) {
       if (closedConsultation[i].dataValues.date.getTime() >= start && closedConsultation[i].dataValues.date.getTime() <= end) {
         revenue += closedConsultation[i].dataValues.cost
