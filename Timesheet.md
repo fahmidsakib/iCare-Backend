@@ -84,7 +84,8 @@ Estimated time: 40hours
     11:05 - 11:45: Working on the small CSS issue
     11:45 - 12:00: Working on the snackbar
     12:00 - 01:00: Working on the fixing some logical calculation
-    01:00 - 01:xx: Working on the deploying the site
+    01:00 - 01:50: Working on the showing patientInfo to doctor
+    02:50 - 03:xx: Working on the showing patientInfo to doctor
 
 
 

@@ -24,9 +24,10 @@ router.post('/save-info', async (req, res) => {
 })
 
 
-router.get('/get-patient-info/:patientId', async (req, res) => {
+router.post('/get-patient-info', async (req, res) => {
+  const { email } = req.body
   try {
-    const patientInfo = await patientModel.findAll({ where: { id: req.params.patientId } })
+    const patientInfo = await patientModel.findOne({ where: { email: email } })
     res.status(200).json({ data: patientInfo })
   } catch (error) {
     res.status(501).json({ error: error.message })
