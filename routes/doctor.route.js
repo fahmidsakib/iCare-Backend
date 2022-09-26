@@ -8,7 +8,7 @@ const consultationModel = require('../models/consultation.model')
 router.get('/check-info', async (req, res) => {
   const doctor = await doctorModel.findAll({ where: { email: req.payload.email } })
   if (doctor.length === 0) return res.status(200).json({ data: undefined })
-  else res.status(200).json({ data: doctor })
+  else res.status(200).json({ data: doctor[0] })
 })
 
 
@@ -46,7 +46,7 @@ router.get('/get-patients-info', async (req, res) => {
 
 router.get('/get-consultations', async (req, res) => {
   try {
-    const consultation = await consultationModel.findAll({ where: { doctorId: req.payload.id } }, { order: [['date', 'ASC'], ['time', 'ASC']] })
+    const consultation = await consultationModel.findAll({ where: { doctorEmail: req.payload.email } }, { order: [['date', 'ASC'], ['time', 'ASC']] })
     let todaysConsultations = [], upcomingConsultations = []
     for (let i = 0; i < consultation.length; i++) {
       if (consultation[i].dataValues.date.getDate() === new Date().getDate()) todaysConsultations.push(consultation[i].dataValues)
@@ -64,7 +64,7 @@ router.get('/revenue', async (req, res) => {
   if (req.query.end_date !== undefined) end = new Date(req.query.end_date).getTime()
   try {
     const closedConsultation = await consultationModel.findAll({ order: [['date', 'DESC'], ['time', 'ASC']] },
-      { where: { doctorId: req.payload.id, status: 'Closed' } })
+      { where: { doctorEmail: req.payload.email, status: 'Closed' } })
     for (let i = 0; i < closedConsultation.length; i++) {
       if (closedConsultation[i].dataValues.date.getTime() >= start && closedConsultation[i].dataValues.date.getTime() <= end) {
         revenue += closedConsultation[i].dataValues.cost

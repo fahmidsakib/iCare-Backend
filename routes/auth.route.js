@@ -56,24 +56,33 @@ router.post('/reset-password-request', async (req, res) => {
       from: "iCare Support <fahmidsakib97@gmail.com>",
       to: [email],
       subject: "Reset password token",
-      html: `<a href="http://localhost:8000/auth/reset-password-confirm/${existingUser[0].dataValues.id}/${code}">Click here to reset your password</a>`,
+      html: `<a href="http://localhost:8000/auth/reset-password/${existingUser[0].dataValues.id}/${code}">Click here to reset your password</a>`,
     })
-    .then(msg => res.status(200).json({ alert: msg.message }))
+    .then(msg => res.status(200).json({ alert: "Kindly check your email" }))
     .catch(err => res.status(501).json({ error: err }))
 })
 
 
-router.post('/reset-password-confirm/:id/:code', async (req, res) => {
+router.get('/reset-password/:id/:code', async (req, res) => {
+  try {
+    const existingUser = await authModel.findOne({ where: { id: req.params.id } })
+    if (existingUser.dataValues.resetPassCode !== req.params.code) return res.status(400).json({ error: 'Invalid link' })
+    const updateUser = await authModel.update({ resetPassCode: '' }, { where: { id: req.params.id } })
+    res.status(200).json({data: true})
+  } catch (error) {
+    res.status(501).json({ error: error.message })
+  }
+})
+
+router.post('/reset-password-confirm', async (req, res) => {
   const { password, confirmPassword } = req.body
   if (!password || !confirmPassword) return res.status(400).json({ error: 'Both fields are required' })
   if (password !== confirmPassword) return res.status(400).json({ error: 'Password does not match' })
-  const existingUser = await authModel.findAll({ where: { id: req.params.id } })
-  if (existingUser[0].dataValues.resetPassCode !== req.params.code) return res.status(400).json({ error: 'Invalid link' })
   const salt = await bcrypt.genSalt(10)
   const hash = await bcrypt.hash(password, salt)
   try {
     const updateUser = await authModel.update({ password: hash, resetPassCode: '' }, { where: { id: req.params.id } })
-    res.status(200).json({alert: "Password changed successful"})
+    res.status(200).json({ alert: "Password changed successful" })
   } catch (error) {
     res.status(501).json({ error: error.message })
   }

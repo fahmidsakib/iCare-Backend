@@ -4,13 +4,16 @@ const sequelize = new Sequelize(process.env.URL);
 
 const consultationModel = sequelize.define('Consultation',
   {
-    patientId: { type: DataTypes.INTEGER, allowNull: false },
-    doctorId: { type: DataTypes.INTEGER, allowNull: false },
+    patientName: { type: DataTypes.STRING, allowNull: false },
+    doctorName: { type: DataTypes.STRING, allowNull: false },
+    patientEmail: { type: DataTypes.STRING, allowNull: false },
+    doctorEmail: { type: DataTypes.STRING, allowNull: false },
     time: { type: DataTypes.TIME, allowNull: false },
     status: { type: DataTypes.STRING, defaultValue: 'Upcoming' },
     prescription: { type: DataTypes.TEXT, defaultValue: '' },
     date: { type: DataTypes.DATE, allowNull: false },
-    cost: { type: DataTypes.INTEGER, allowNull: false }
+    cost: { type: DataTypes.INTEGER, allowNull: false },
+    rated: { type: DataTypes.BOOLEAN, defaultValue: false },
   },
   { timestamps: true, freezeTableName: true },
 )
