@@ -50,8 +50,8 @@ router.get('/get-consultations', async (req, res) => {
     const consultation = await consultationModel.findAll({ where: { doctorEmail: req.payload.email } }, { order: [['date', 'ASC'], ['time', 'ASC']] })
     let todaysConsultations = [], upcomingConsultations = []
     for (let i = 0; i < consultation.length; i++) {
-      if (consultation[i].dataValues.date.getDate() === new Date().getDate()) todaysConsultations.push(consultation[i].dataValues)
-      if (consultation[i].dataValues.date.getDate() > new Date().getDate()) upcomingConsultations.push(consultation[i].dataValues)
+      if (consultation[i].dataValues.date.getMonth() === new Date().getMonth() && consultation[i].dataValues.date.getDate() === new Date().getDate()) todaysConsultations.push(consultation[i].dataValues)
+      if (consultation[i].dataValues.date.getMonth() >= new Date().getMonth() && consultation[i].dataValues.date.getDate() > new Date().getDate()) upcomingConsultations.push(consultation[i].dataValues)
     }
     res.status(200).json({ data: { todaysConsultations, upcomingConsultations } })
   } catch (error) {
